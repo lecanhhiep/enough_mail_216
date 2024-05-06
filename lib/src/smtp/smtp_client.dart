@@ -104,18 +104,18 @@ class SmtpClient extends ClientBase {
   /// decide (or let the user decide) whether to accept the connection or not.
   /// The handler should return true to continue the [SecureSocket] connection.
   SmtpClient(
-    String clientDomain, {
-    EventBus? bus,
-    bool isLogEnabled = false,
-    String? logName,
-    bool Function(X509Certificate)? onBadCertificate,
-  })  : _eventBus = bus ?? EventBus(),
+      String clientDomain, {
+        EventBus? bus,
+        bool isLogEnabled = false,
+        String? logName,
+        bool Function(X509Certificate)? onBadCertificate,
+      })  : _eventBus = bus ?? EventBus(),
         _clientDomain = clientDomain,
         super(
-          isLogEnabled: isLogEnabled,
-          logName: logName,
-          onBadCertificate: onBadCertificate,
-        );
+        isLogEnabled: isLogEnabled,
+        logName: logName,
+        onBadCertificate: onBadCertificate,
+      );
 
   /// Information about the SMTP service
   late SmtpServerInfo serverInfo;
@@ -146,9 +146,9 @@ class SmtpClient extends ClientBase {
 
   @override
   FutureOr<void> onConnectionEstablished(
-    ConnectionInfo connectionInfo,
-    String serverGreeting,
-  ) {
+      ConnectionInfo connectionInfo,
+      String serverGreeting,
+      ) {
     serverInfo = SmtpServerInfo(
       connectionInfo.host,
       connectionInfo.port,
@@ -162,34 +162,16 @@ class SmtpClient extends ClientBase {
     eventBus.fire(SmtpConnectionLostEvent(this));
   }
 
-
-  List<String> liness = [];
-  @override
-  void onConnectionDone() {
-    logApp('Done, connection closed 1');
-    isLoggedIn = false;
-
-    if(liness.isNotEmpty) {
-      onServerResponse(liness);
-    }
-    if (!isSocketClosingExpected) {
-      isSocketClosingExpected = true;
-      onConnectionError('onDone not expected 1');
-    }
-  }
-
   @override
   void onDataReceived(Uint8List data) {
-  //  print('onData: [${String.fromCharCodes(data).
+    //print('onData: [${String.fromCharCodes(data).
     //       replaceAll("\r\n", "<CRLF>\n")}]');
     _uint8listReader.add(data);
     final lines = _uint8listReader.readLines();
     if (lines != null) {
-      liness.addAll(lines);
-//      onServerResponse(lines);
+      onServerResponse(lines);
     }
   }
-
 
   /// Issues the enhanced helo command to find out the service capabilities
   ///
@@ -252,11 +234,11 @@ class SmtpClient extends ClientBase {
   /// Optionally specify the [recipients], in which case the recipients
   /// defined in the message are ignored.
   Future<SmtpResponse> sendMessage(
-    MimeMessage message, {
-    bool use8BitEncoding = false,
-    MailAddress? from,
-    List<MailAddress>? recipients,
-  }) {
+      MimeMessage message, {
+        bool use8BitEncoding = false,
+        MailAddress? from,
+        List<MailAddress>? recipients,
+      }) {
     final recipientEmails = recipients != null
         ? recipients.map((r) => r.email).toList()
         : message.recipientAddresses;
@@ -278,11 +260,11 @@ class SmtpClient extends ClientBase {
   ///
   /// Set [use8BitEncoding] to `true` for sending a UTF-8 encoded message body.
   Future<SmtpResponse> sendMessageData(
-    MimeData data,
-    MailAddress from,
-    List<MailAddress> recipients, {
-    bool use8BitEncoding = false,
-  }) {
+      MimeData data,
+      MailAddress from,
+      List<MailAddress> recipients, {
+        bool use8BitEncoding = false,
+      }) {
     if (recipients.isEmpty) {
       throw SmtpException(this, SmtpResponse(['500 no recipients']));
     }
@@ -303,11 +285,11 @@ class SmtpClient extends ClientBase {
   /// the padding of `<CR><LF>.<CR><LF>` sequences.
   /// Set [use8BitEncoding] to `true` for sending a UTF-8 encoded message body.
   Future<SmtpResponse> sendMessageText(
-    String text,
-    MailAddress from,
-    List<MailAddress> recipients, {
-    bool use8BitEncoding = false,
-  }) {
+      String text,
+      MailAddress from,
+      List<MailAddress> recipients, {
+        bool use8BitEncoding = false,
+      }) {
     if (recipients.isEmpty) {
       throw SmtpException(this, SmtpResponse(['500 no recipients']));
     }
@@ -336,12 +318,12 @@ class SmtpClient extends ClientBase {
   /// Optionally specify the [recipients], in which case the recipients
   /// defined in the message are ignored.
   Future<SmtpResponse> sendChunkedMessage(
-    MimeMessage message, {
-    required bool supportUnicode,
-    bool use8BitEncoding = false,
-    MailAddress? from,
-    List<MailAddress>? recipients,
-  }) {
+      MimeMessage message, {
+        required bool supportUnicode,
+        bool use8BitEncoding = false,
+        MailAddress? from,
+        List<MailAddress>? recipients,
+      }) {
     final recipientEmails = recipients != null
         ? recipients.map((r) => r.email).toList()
         : message.recipientAddresses;
@@ -367,12 +349,12 @@ class SmtpClient extends ClientBase {
   ///
   /// Set [use8BitEncoding] to `true` for sending a UTF-8 encoded message body.
   Future<SmtpResponse> sendChunkedMessageData(
-    MimeData data,
-    MailAddress from,
-    List<MailAddress> recipients, {
-    required bool supportUnicode,
-    bool use8BitEncoding = false,
-  }) {
+      MimeData data,
+      MailAddress from,
+      List<MailAddress> recipients, {
+        required bool supportUnicode,
+        bool use8BitEncoding = false,
+      }) {
     if (recipients.isEmpty) {
       throw SmtpException(this, SmtpResponse(['500 no recipients']));
     }
@@ -400,12 +382,12 @@ class SmtpClient extends ClientBase {
   ///
   /// Set [use8BitEncoding] to `true` for sending a UTF-8 encoded message body.
   Future<SmtpResponse> sendChunkedMessageText(
-    String text,
-    MailAddress from,
-    List<MailAddress> recipients, {
-    required bool supportUnicode,
-    bool use8BitEncoding = false,
-  }) {
+      String text,
+      MailAddress from,
+      List<MailAddress> recipients, {
+        required bool supportUnicode,
+        bool use8BitEncoding = false,
+      }) {
     if (recipients.isEmpty) {
       throw SmtpException(this, SmtpResponse(['500 no recipients']));
     }
@@ -426,10 +408,10 @@ class SmtpClient extends ClientBase {
   /// For `AuthMechanism.xoauth2` the [password] must be the OAuth token.
   /// By default the [authMechanism] `AUTH PLAIN` is being used.
   Future<SmtpResponse> authenticate(
-    String name,
-    String password, [
-    AuthMechanism authMechanism = AuthMechanism.plain,
-  ]) {
+      String name,
+      String password, [
+        AuthMechanism authMechanism = AuthMechanism.plain,
+      ]) {
     late SmtpCommand command;
     switch (authMechanism) {
       case AuthMechanism.plain:
@@ -459,10 +441,8 @@ class SmtpClient extends ClientBase {
 
   /// Sends the command to the server
   Future<SmtpResponse> sendCommand(SmtpCommand command) {
-      liness = [];
-
     _currentCommand = command;
-    writeText(command.command, command, Duration(seconds: 35));
+    writeText(command.command, command);
 
     return command.completer.future;
   }
@@ -474,7 +454,33 @@ class SmtpClient extends ClientBase {
         log(responseText, isClient: false);
       }
     }
+
     final response = SmtpResponse(responseTexts);
+
+    if (response.code == 250 && response.message != null) {
+      serverInfo.capabilities.add(response.message!);
+      if (response.message!.startsWith('AUTH ')) {
+        if (response.message!.contains('PLAIN')) {
+          serverInfo.authMechanisms.add(AuthMechanism.plain);
+        }
+        if (response.message!.contains('LOGIN')) {
+          serverInfo.authMechanisms.add(AuthMechanism.login);
+        }
+        if (response.message!.contains('CRAM-MD5')) {
+          serverInfo.authMechanisms.add(AuthMechanism.cramMd5);
+        }
+        if (response.message!.contains('XOAUTH2')) {
+          serverInfo.authMechanisms.add(AuthMechanism.xoauth2);
+        }
+      } else {
+        serverInfo.capabilities.add(response.message!);
+        if (response.message!.startsWith('SIZE ')) {
+          final maxSizeText = response.message!.substring('SIZE '.length);
+          serverInfo.maxMessageSize = int.tryParse(maxSizeText);
+        }
+      }
+    }
+
     final cmd = _currentCommand;
     if (cmd != null) {
       try {
