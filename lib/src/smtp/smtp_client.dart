@@ -168,7 +168,6 @@ class SmtpClient extends ClientBase {
   void onConnectionDone() {
     logApp('Done, connection closed 1');
     isLoggedIn = false;
-    _isConnected = false;
 
     if(liness.isNotEmpty) {
       onServerResponse(liness);
