@@ -442,7 +442,7 @@ class SmtpClient extends ClientBase {
   /// Sends the command to the server
   Future<SmtpResponse> sendCommand(SmtpCommand command) {
     _currentCommand = command;
-    writeText(command.command, command, Duration(seconds: 5));
+    writeText(command.command, command, Duration(seconds: 35));
 
     return command.completer.future;
   }
