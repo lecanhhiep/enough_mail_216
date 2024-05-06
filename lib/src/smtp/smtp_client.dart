@@ -162,16 +162,35 @@ class SmtpClient extends ClientBase {
     eventBus.fire(SmtpConnectionLostEvent(this));
   }
 
+
+  List<String> liness = [];
+  @override
+  void onConnectionDone() {
+    logApp('Done, connection closed 1');
+    isLoggedIn = false;
+    _isConnected = false;
+
+    if(liness.isNotEmpty) {
+      onServerResponse(liness);
+    }
+    if (!isSocketClosingExpected) {
+      isSocketClosingExpected = true;
+      onConnectionError('onDone not expected 1');
+    }
+  }
+
   @override
   void onDataReceived(Uint8List data) {
-    //print('onData: [${String.fromCharCodes(data).
+  //  print('onData: [${String.fromCharCodes(data).
     //       replaceAll("\r\n", "<CRLF>\n")}]');
     _uint8listReader.add(data);
     final lines = _uint8listReader.readLines();
     if (lines != null) {
-      onServerResponse(lines);
+      liness.addAll(lines);
+//      onServerResponse(lines);
     }
   }
+
 
   /// Issues the enhanced helo command to find out the service capabilities
   ///
@@ -441,6 +460,8 @@ class SmtpClient extends ClientBase {
 
   /// Sends the command to the server
   Future<SmtpResponse> sendCommand(SmtpCommand command) {
+      liness = [];
+
     _currentCommand = command;
     writeText(command.command, command, Duration(seconds: 35));
 
