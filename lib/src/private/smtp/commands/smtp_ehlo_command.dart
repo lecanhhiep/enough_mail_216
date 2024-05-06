@@ -18,6 +18,6 @@ class SmtpEhloCommand extends SmtpCommand {
 
   @override
   bool isCommandDone(SmtpResponse response) =>
-      (response.type != SmtpResponseType.success) ||
-      (response.responseLines.length > 1);
+       (response.type != SmtpResponseType.success) ||
+      (response.responseLines.length > 1)  || response.responseLines[0].message.contains("SIZE ");
 }
